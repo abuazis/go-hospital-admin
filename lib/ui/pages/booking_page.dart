@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_hospital_admin/services/booking_service.dart';
 import 'package:go_hospital_admin/ui/pages/login_page.dart';
+import 'package:go_hospital_admin/ui/pages/report_pdf.dart';
 import 'package:go_hospital_admin/ui/widget/book_list_card.dart';
 
 class BookingPage extends StatefulWidget {
@@ -59,8 +60,7 @@ class _BookingPageState extends State<BookingPage> {
           ),
           StreamBuilder<QuerySnapshot>(
             stream: BookingService.bookingCollection.snapshots(),
-            builder:
-                (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+            builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
               if (snapshot.hasError) {
                 return Text('Something went wrong');
               }
@@ -71,21 +71,33 @@ class _BookingPageState extends State<BookingPage> {
 
               if (snapshot.data!.docs.isNotEmpty) {
                 return Column(
-                  children:
-                      snapshot.data!.docs.map((DocumentSnapshot document) {
-                    Map<String, dynamic> data =
-                        document.data()! as Map<String, dynamic>;
+                  children: snapshot.data!.docs.map((DocumentSnapshot document) {
+                    Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
 
                     return BookListCard(
                       name: data['patient']['name'] ?? "",
                       purpose: data['purpose_type'] ?? "",
                       schedule: data['schedule'] ?? "",
                       price: data['total_price'] ?? "",
-                      reportTime: DateTime.parse(
-                          data['report_time'] ?? DateTime.now().toString()),
                       report: data['report'] ?? "",
+                      reportTime: DateTime.parse(
+                        data['report_time'] ?? DateTime.now().toString()
+                      ),
                       onPressed: () {
                         BookingService.updateReport(document.id);
+                      },
+                      onDownload: () {
+                        reportPDF(
+                          context,
+                          idBooking: document.id.toUpperCase(),
+                          patientName: data['patient']['name'] ?? "-",
+                          patientGender: data['patient']['gender'] ?? "-",
+                          message: (data['message'] == null || data['message'] == "") ? data['message'] : "-",
+                          serviceType: data['service_type'] ?? "-",
+                          purposeType: data['purpose_type'] ?? "-",
+                          paymentMethod: data['payment_method'] ?? "-",
+                          totalPrice: data['total_price'] ?? "-",
+                        );
                       },
                     );
                   }).toList(),

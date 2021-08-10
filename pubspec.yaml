@@ -29,6 +29,8 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_screenutil: ^5.0.0+2
+  pdf: ^3.4.2
+  universal_html: ^2.0.8
 
 dev_dependencies:
   flutter_test:

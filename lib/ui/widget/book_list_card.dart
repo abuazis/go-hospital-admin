@@ -10,6 +10,7 @@ class BookListCard extends StatelessWidget {
   final DateTime reportTime;
   final String report;
   final void Function()? onPressed;
+  final void Function()? onDownload;
 
   BookListCard({
     required this.name,
@@ -19,6 +20,7 @@ class BookListCard extends StatelessWidget {
     required this.reportTime,
     required this.report,
     this.onPressed,
+    this.onDownload,
   });
 
   @override
@@ -146,7 +148,7 @@ class BookListCard extends StatelessWidget {
                     width: 16,
                   ),
                   ElevatedButton(
-                    onPressed: () {},
+                    onPressed: onDownload,
                     style: ElevatedButton.styleFrom(
                       elevation: 0,
                       shape: RoundedRectangleBorder(
